@@ -138,8 +138,5 @@
       "module",
       "typescript"
     ]
-  },
-  "dependencies": {
-    "react-native-parsed-text": "^0.0.22"
-  }
+  } 
 }
