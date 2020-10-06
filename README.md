@@ -12,9 +12,11 @@ npm install @lowkey/react-native-mentions-input
 
 ```js
 import MentionsInput, {parseMarkdown} from '@lowkey/react-native-mentions-input';
+```
 
-// ...
+### Input
 
+```js
 <MentionsInput
     value={value}
     onTextChange={onChangeText}
@@ -56,19 +58,22 @@ import MentionsInput, {parseMarkdown} from '@lowkey/react-native-mentions-input'
       </View>
     )}
 />
+```
 
-// Raw markdown
+### Parsing markdown 
+#### parseMarkdown(markdown, mentionStyle)
+`onMarkdownChange` returns markdown of the input. To parse the markdown use helper function `parseMarkdown`, which parses markdown into array of `<Text>` nodes.
+
+```js
 <View style={styles.exampleContainer}>
-    <Text style={styles.exampleHeader}>Markdown</Text>
-    <Text>{markdown}</Text>
+  <Text style={styles.exampleHeader}>Parsed Text</Text>
+  <Text>{parseMarkdown(markdown, styles.mentionStyle)}</Text>
 </View>
+``` 
 
-      // Parsed text
-      <View style={styles.exampleContainer}>
-        <Text style={styles.exampleHeader}>Parsed Text</Text>
-        <Text>{parseMarkdown(markdown, styles.mentionStyle)}</Text>
-      </View>
+### Example Styles
 
+```js
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -123,7 +128,6 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     }
 });
-
 ```
 
 ## Contributing
