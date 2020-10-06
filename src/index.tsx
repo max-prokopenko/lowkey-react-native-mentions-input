@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   NativeSyntheticEvent,
+  StyleSheet,
   Text,
   TextInput,
   TextInputKeyPressEventData,
@@ -14,6 +15,8 @@ type Props = {
   value: string;
   onTextChange: (text: string) => void;
   onMarkdownChange: (markdown: string) => void;
+  leftComponent?: React.ReactNode;
+  rightComponent?: React.ReactNode;
   textInputStyle: ViewStyle;
   mentionStyle: TextStyle;
   suggestedUsersComponent: any;
@@ -270,6 +273,23 @@ export default class MentionsInput extends React.Component<Props, State> {
     });
     this.props.onMarkdownChange(markdown);
   };
+
+  renderLeftComponent = () => {
+    if (typeof this.props.leftComponent !== 'undefined') {
+      return this.props.leftComponent;
+    } else {
+      return null;
+    }
+  };
+
+  renderRightComponent = () => {
+    if (typeof this.props.rightComponent !== 'undefined') {
+      return this.props.rightComponent;
+    } else {
+      return null;
+    }
+  };
+
   render() {
     return (
       <View>
@@ -279,14 +299,18 @@ export default class MentionsInput extends React.Component<Props, State> {
               this.state.suggestedUsers,
               this.handleAddMentions
             )}
-          <TextInput
-            value={decodeURI(this.props.value)}
-            onChangeText={this.onTextChange}
-            onKeyPress={this.handleDelete}
-            keyboardType="twitter"
-            style={this.props.textInputStyle}
-            onSelectionChange={this.onSelectionChange}
-          />
+          <View style={styles.inputContainerRow}>
+            {this.renderLeftComponent()}
+            <TextInput
+              value={decodeURI(this.props.value)}
+              onChangeText={this.onTextChange}
+              onKeyPress={this.handleDelete}
+              keyboardType="twitter"
+              style={this.props.textInputStyle}
+              onSelectionChange={this.onSelectionChange}
+            />
+            {this.renderRightComponent()}
+          </View>
         </View>
       </View>
     );
@@ -309,9 +333,6 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
       id: matchedUser.split('::')[1],
       name: matchedUser.split('::')[0],
     };
-    console.log('Part1', textToParse.substring(parseHeadIndex, match.index));
-    console.log('Part1', `@${decodeURI(mention.name)}`);
-
     parsedTextArray.push(
       <Text>
         {decodeURIComponent(textToParse.substring(parseHeadIndex, match.index))}
@@ -320,20 +341,11 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
     parsedTextArray.push(
       <Text style={mentionStyle}>{`@${decodeURI(mention.name)}`}</Text>
     );
-    console.log('Index', match.index);
-    console.log('hed', match);
-    console.log('hed2', typeof match.index);
     if (typeof match.index === 'number') {
       parseHeadIndex = match.index + match[0].length;
     }
 
     if (index === matches.length - 1) {
-      console.log(
-        'Part3',
-        decodeURIComponent(
-          textToParse.substring(parseHeadIndex, textToParse.length)
-        )
-      );
       parsedTextArray.push(
         <Text>
           {decodeURIComponent(
@@ -345,3 +357,9 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
   });
   return parsedTextArray;
 };
+
+const styles = StyleSheet.create({
+  inputContainerRow: {
+    flexDirection: 'row',
+  },
+});
