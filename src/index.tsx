@@ -56,6 +56,18 @@ export default class MentionsInput extends React.Component<Props, State> {
     mentions: [],
     markdown: '',
   };
+  componentDidUpdate() {
+    if (
+      this.props.value === '' &&
+      (this.state.mentions.length > 0 || this.state.matches.length > 0)
+    ) {
+      this.setState({
+        mentions: [],
+        matches: [],
+        currentCursorPosition: 1,
+      });
+    }
+  }
   onTextChange = (text: string) => {
     const pattern = /\B@[a-zA-Z0-9%_-]*/gi;
 
@@ -323,7 +335,6 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
   let parsedTextArray: Array<React.ReactNode> = [];
   let parseHeadIndex = 0;
   let matches = [...text.matchAll(pattern)];
-  console.log('Matches', matches);
   if (matches.length === 0) {
     return <Text>{decodeURIComponent(textToParse)}</Text>;
   }
