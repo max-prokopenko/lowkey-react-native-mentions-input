@@ -19,6 +19,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <MentionsInput
+        placeholder={'Message'}
         value={value}
         onTextChange={onChangeText}
         onMarkdownChange={(mrkdwn: string) => setMarkdown(mrkdwn)}

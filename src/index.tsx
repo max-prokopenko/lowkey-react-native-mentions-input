@@ -11,8 +11,10 @@ import {
   ViewStyle,
 } from 'react-native';
 
-type Props = {
+interface Props {
   value: string;
+  placeholder?: string;
+  placeholderTextColor?: string;
   onTextChange: (text: string) => void;
   onMarkdownChange: (markdown: string) => void;
   leftComponent?: React.ReactNode;
@@ -25,7 +27,7 @@ type Props = {
     name: string;
     avatar: string;
   }[];
-};
+}
 type State = {
   isSuggestionsOpen: boolean;
   currentCursorPosition: number;
@@ -48,6 +50,9 @@ type SuggestedUsers = {
 };
 
 export default class MentionsInput extends React.Component<Props, State> {
+  public static defaultProps = {
+    placeholder: 'Write a message...',
+  };
   state: State = {
     isSuggestionsOpen: false,
     suggestedUsers: [],
@@ -314,6 +319,8 @@ export default class MentionsInput extends React.Component<Props, State> {
           <View style={styles.inputContainerRow}>
             {this.renderLeftComponent()}
             <TextInput
+              placeholder={this.props.placeholder}
+              placeholderTextColor={this.props.placeholderTextColor}
               value={decodeURI(this.props.value)}
               onChangeText={this.onTextChange}
               onKeyPress={this.handleDelete}
