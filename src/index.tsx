@@ -15,6 +15,7 @@ interface Props {
   value: string;
   placeholder?: string;
   placeholderTextColor?: string;
+  multiline?: boolean;
   onTextChange: (text: string) => void;
   onMarkdownChange: (markdown: string) => void;
   leftComponent?: React.ReactNode;
@@ -52,6 +53,7 @@ type SuggestedUsers = {
 export default class MentionsInput extends React.Component<Props, State> {
   public static defaultProps = {
     placeholder: 'Write a message...',
+    multiline: false,
   };
   state: State = {
     isSuggestionsOpen: false,
