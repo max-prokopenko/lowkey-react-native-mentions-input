@@ -323,6 +323,7 @@ export default class MentionsInput extends React.Component<Props, State> {
             <TextInput
               placeholder={this.props.placeholder}
               placeholderTextColor={this.props.placeholderTextColor}
+              multiline={this.props.multiline}
               value={decodeURI(this.props.value)}
               onChangeText={this.onTextChange}
               onKeyPress={this.handleDelete}
