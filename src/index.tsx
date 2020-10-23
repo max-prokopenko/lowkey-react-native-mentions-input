@@ -11,6 +11,8 @@ import {
   ViewStyle,
 } from 'react-native';
 
+import matchAll from 'string.prototype.matchall';
+
 interface Props {
   value: string;
   placeholder?: string;
@@ -78,7 +80,7 @@ export default class MentionsInput extends React.Component<Props, State> {
   onTextChange = (text: string) => {
     const pattern = /\B@[a-zA-Z0-9%_-]*/gi;
 
-    let matches = [...text.matchAll(pattern)];
+    let matches = [...matchAll(text, pattern)];
     let mentions = text.length > 0 ? this.state.mentions : [];
 
     this.setState({ matches, mentions });
@@ -344,7 +346,7 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
   let textToParse = text;
   let parsedTextArray: Array<React.ReactNode> = [];
   let parseHeadIndex = 0;
-  let matches = [...text.matchAll(pattern)];
+  let matches = [...matchAll(text, pattern)];
   if (matches.length === 0) {
     return <Text>{decodeURIComponent(textToParse)}</Text>;
   }
