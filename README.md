@@ -1,11 +1,21 @@
 # @lowkey/react-native-mentions-input
 
-Mentions input
+Mentions input for tagging user (@username).
+
+#### 0.1.7 Update
+
+Since 0.1.7 update, `@lowkey/react-native-mentions-input` is also able to parse URLs.
 
 ## Installation
 
 ```sh
 npm install @lowkey/react-native-mentions-input
+```
+
+or
+
+```sh
+yarn add @lowkey/react-native-mentions-input
 ```
 
 ## Usage
@@ -15,6 +25,18 @@ import MentionsInput, {parseMarkdown} from '@lowkey/react-native-mentions-input'
 ```
 
 ### Input
+
+| Property  | Type | Description|
+| ------------- | ------------- | ------------- |
+| value  | string  | Value of the input |
+| placeholder  | string  | Placeholder string for input |
+| placeholderTextColor  | string  | Color of placeholder text |
+| multiline  | boolean  | Boolean indicating whether input multiline or not |
+| leftComponent  | ReactNode  | Component rendered on the left side of the input |
+| rightComponent  | ReactNode  | Component rendered on the right side of the input |
+| textInputStyle  | ViewStyle  | Style of the input (TextInput) |
+| suggestedUsersComponent  | ReactNode  | Component for suggested users triggered by @  |
+| users  |  { id: string; name: string; avatar: string; } [] | List of users to be suggested in suggestedUsersComponent |
 
 ```js
 <MentionsInput
@@ -63,6 +85,14 @@ import MentionsInput, {parseMarkdown} from '@lowkey/react-native-mentions-input'
 ### Parsing markdown 
 #### parseMarkdown(markdown, mentionStyle)
 `onMarkdownChange` returns markdown of the input. To parse the markdown use helper function `parseMarkdown`, which parses markdown into array of `<Text>` nodes.
+
+URL are parssed to `<TouchableWithoutFeedback>` node, which open parsed URL with `Linking.openURL()`
+
+| Argument  | Type | Description|
+| ------------- | ------------- | ------------- |
+| markdown  | string  | Markdown string to be parsed |
+| mentionStyle  | TextStyle  | Style of parsed mentions |
+| urlStyle  | TextStyle  | Style of parsed urls |
 
 ```js
 <View style={styles.exampleContainer}>
