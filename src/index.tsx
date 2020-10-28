@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Linking,
   NativeSyntheticEvent,
   StyleSheet,
   Text,
@@ -7,6 +8,7 @@ import {
   TextInputKeyPressEventData,
   TextInputSelectionChangeEventData,
   TextStyle,
+  TouchableWithoutFeedback,
   View,
   ViewStyle,
 } from 'react-native';
@@ -78,28 +80,53 @@ export default class MentionsInput extends React.Component<Props, State> {
     }
   }
   onTextChange = (text: string) => {
+    this.handleMentions(text);
+    // this.handleURLs(text);
+  };
+  handleMentions = (text: string) => {
     const pattern = /\B@[a-zA-Z0-9%_-]*/gi;
 
     let matches = [...matchAll(text, pattern)];
     let mentions = text.length > 0 ? this.state.mentions : [];
+    console.log('\n ---------------- \n text', text);
+    console.log('matches', matches);
+    console.log('mentions', mentions);
 
     this.setState({ matches, mentions });
     setTimeout(() => {
       this.handleSuggestionsOpen(matches);
     }, 100);
-    mentions.map((mention) => {
+    mentions.map(async (mention) => {
       const matchStartPosition = mention.user.startPosition;
+      console.log(
+        'Handle start positiom -> matchStartPosition',
+        matchStartPosition
+      );
+      console.log(
+        'Handle start positiom -> this.state.currentCursorPosition',
+        this.state.currentCursorPosition
+      );
+
+      console.log(
+        'Handle start positiom -> not at the end?',
+        this.state.currentCursorPosition !== this.props.value.length,
+        this.state.currentCursorPosition,
+        this.props.value.length
+      );
       if (decodeURI(text).length - decodeURI(this.props.value).length > 0) {
         if (
           matchStartPosition + (text.length - this.props.value.length) >
-          this.state.currentCursorPosition
+            this.state.currentCursorPosition &&
+          this.state.currentCursorPosition !== this.props.value.length
         ) {
+          console.log('Handle start positiom 1');
           mention.user.startPosition =
             mention.user.startPosition +
             (text.length - this.props.value.length);
         }
       } else {
         if (matchStartPosition >= this.state.currentCursorPosition) {
+          console.log('Handle start positiom 2');
           mention.user.startPosition =
             mention.user.startPosition +
             (text.length - this.props.value.length);
@@ -107,6 +134,7 @@ export default class MentionsInput extends React.Component<Props, State> {
       }
       return mention;
     });
+    console.log('Length 4', mentions);
     this.setState({
       mentions,
     });
@@ -341,14 +369,53 @@ export default class MentionsInput extends React.Component<Props, State> {
   }
 }
 
-export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
+export const parseMarkdown = (
+  text: string,
+  mentionStyle: TextStyle,
+  urlStyle?: TextStyle
+) => {
   const pattern = /<@[a-zA-Z0-9%_-]+::[a-f\d]{24}>/gi;
+  const patternURL = /(?:(?:https?):\/\/|www\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
   let textToParse = text;
   let parsedTextArray: Array<React.ReactNode> = [];
   let parseHeadIndex = 0;
   let matches = [...matchAll(text, pattern)];
+
   if (matches.length === 0) {
-    return <Text>{decodeURIComponent(textToParse)}</Text>;
+    let currentParsable = decodeURIComponent(textToParse);
+    let matchesURL = [...matchAll(currentParsable, patternURL)];
+    if (matchesURL.length > 0) {
+      parsedTextArray.push(
+        <Text>{currentParsable.substring(0, matchesURL[0].index)}</Text>
+      );
+      matchesURL.map((url, index) => {
+        let urlIndex = 0;
+        if (typeof url.index !== 'undefined') {
+          urlIndex = url.index;
+        }
+        parsedTextArray.push(
+          <TouchableWithoutFeedback onPress={() => Linking.openURL(url[0])}>
+            <Text style={urlStyle}>
+              {currentParsable.substring(urlIndex, url[0].length + urlIndex)}
+            </Text>
+          </TouchableWithoutFeedback>
+        );
+        parsedTextArray.push(
+          <Text>
+            {currentParsable.substring(
+              url[0].length +
+                (typeof url.index !== 'undefined' ? url.index : 0),
+              index === matchesURL.length - 1
+                ? currentParsable.length
+                : matchesURL[index + 1].index
+            )}
+          </Text>
+        );
+      });
+    } else {
+      return <Text>{decodeURIComponent(textToParse)}</Text>;
+    }
+    return parsedTextArray;
   }
   matches.map((match, index) => {
     const matchedUser = match[0].slice(2, -1);
@@ -356,11 +423,47 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
       id: matchedUser.split('::')[1],
       name: matchedUser.split('::')[0],
     };
-    parsedTextArray.push(
-      <Text>
-        {decodeURIComponent(textToParse.substring(parseHeadIndex, match.index))}
-      </Text>
+
+    let currentParsable = decodeURIComponent(
+      textToParse.substring(parseHeadIndex, match.index)
     );
+    let matchesURL = [...matchAll(currentParsable, patternURL)];
+    if (matchesURL.length > 0) {
+      parsedTextArray.push(
+        <Text>{currentParsable.substring(0, matchesURL[0].index)}</Text>
+      );
+      matchesURL.map((url, index) => {
+        let urlIndex = 0;
+        if (typeof url.index !== 'undefined') {
+          urlIndex = url.index;
+        }
+        parsedTextArray.push(
+          <TouchableWithoutFeedback onPress={() => Linking.openURL(url[0])}>
+            <Text style={urlStyle}>
+              {currentParsable.substring(urlIndex, url[0].length + urlIndex)}
+            </Text>
+          </TouchableWithoutFeedback>
+        );
+        parsedTextArray.push(
+          <Text>
+            {currentParsable.substring(
+              url[0].length + urlIndex,
+              index === matchesURL.length - 1
+                ? currentParsable.length
+                : matchesURL[index + 1].index
+            )}
+          </Text>
+        );
+      });
+    } else {
+      parsedTextArray.push(
+        <Text>
+          {decodeURIComponent(
+            textToParse.substring(parseHeadIndex, match.index)
+          )}
+        </Text>
+      );
+    }
     parsedTextArray.push(
       <Text style={mentionStyle}>{`@${decodeURI(mention.name)}`}</Text>
     );
@@ -369,13 +472,46 @@ export const parseMarkdown = (text: string, mentionStyle: TextStyle) => {
     }
 
     if (index === matches.length - 1) {
-      parsedTextArray.push(
-        <Text>
-          {decodeURIComponent(
-            textToParse.substring(parseHeadIndex, textToParse.length)
-          )}
-        </Text>
+      let lastParsable = decodeURIComponent(
+        textToParse.substring(parseHeadIndex, textToParse.length)
       );
+      let matchesURL = [...matchAll(lastParsable, patternURL)];
+      if (matchesURL.length > 0) {
+        parsedTextArray.push(
+          <Text>{lastParsable.substring(0, matchesURL[0].index)}</Text>
+        );
+        matchesURL.map((url, index) => {
+          let urlIndex = 0;
+          if (typeof url.index !== 'undefined') {
+            urlIndex = url.index;
+          }
+          parsedTextArray.push(
+            <TouchableWithoutFeedback onPress={() => Linking.openURL(url[0])}>
+              <Text style={urlStyle}>
+                {lastParsable.substring(urlIndex, url[0].length + urlIndex)}
+              </Text>
+            </TouchableWithoutFeedback>
+          );
+          parsedTextArray.push(
+            <Text>
+              {lastParsable.substring(
+                url[0].length + urlIndex,
+                index === matchesURL.length - 1
+                  ? lastParsable.length
+                  : matchesURL[index + 1].index
+              )}
+            </Text>
+          );
+        });
+      } else {
+        parsedTextArray.push(
+          <Text>
+            {decodeURIComponent(
+              textToParse.substring(parseHeadIndex, textToParse.length)
+            )}
+          </Text>
+        );
+      }
     }
   });
   return parsedTextArray;

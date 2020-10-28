@@ -67,12 +67,14 @@ export default function App() {
         )}
       />
       <View style={styles.exampleContainer}>
-        <Text style={styles.exampleHeader}>Markdown</Text>
-        <Text>{markdown}</Text>
+        <Text style={styles.exampleHeader}>Parsed Text</Text>
+        <Text>
+          {parseMarkdown(markdown, styles.mentionStyle, styles.urlStyle)}
+        </Text>
       </View>
       <View style={styles.exampleContainer}>
-        <Text style={styles.exampleHeader}>Parsed Text</Text>
-        <Text>{parseMarkdown(markdown, styles.mentionStyle)}</Text>
+        <Text style={styles.exampleHeader}>Markdown</Text>
+        <Text>{markdown}</Text>
       </View>
     </View>
   );
@@ -94,6 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     borderColor: '#c1c1c1',
+    color: '#000',
     borderWidth: StyleSheet.hairlineWidth,
   },
   suggestedUserComponentImageStyle: {
@@ -119,10 +122,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   mentionStyle: {
-    fontWeight: '500',
+    fontWeight: '400',
     color: 'blue',
   },
-
+  urlStyle: {
+    fontWeight: '400',
+    color: 'blue',
+    textDecorationLine: 'underline',
+  },
   // Example styles
   sendButtonStyle: {
     marginTop: 20,
