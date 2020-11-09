@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Linking,
   NativeSyntheticEvent,
   StyleSheet,
   Text,
@@ -395,7 +394,9 @@ export const parseMarkdown = (
           urlIndex = url.index;
         }
         parsedTextArray.push(
-          <TouchableWithoutFeedback onPress={() => Linking.openURL(url[0])}>
+          <TouchableWithoutFeedback
+            onPress={() => (handleURL ? handleURL(url[0]) : null)}
+          >
             <Text style={urlStyle}>
               {currentParsable.substring(urlIndex, url[0].length + urlIndex)}
             </Text>
@@ -439,7 +440,9 @@ export const parseMarkdown = (
           urlIndex = url.index;
         }
         parsedTextArray.push(
-          <TouchableWithoutFeedback onPress={() => Linking.openURL(url[0])}>
+          <TouchableWithoutFeedback
+            onPress={() => (handleURL ? handleURL(url[0]) : null)}
+          >
             <Text style={urlStyle}>
               {currentParsable.substring(urlIndex, url[0].length + urlIndex)}
             </Text>
