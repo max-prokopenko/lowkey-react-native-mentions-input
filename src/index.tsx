@@ -372,7 +372,8 @@ export default class MentionsInput extends React.Component<Props, State> {
 export const parseMarkdown = (
   text: string,
   mentionStyle: TextStyle,
-  urlStyle?: TextStyle
+  urlStyle?: TextStyle,
+  handleURL?: (url: string) => void
 ) => {
   const pattern = /<@[a-zA-Z0-9%_-]+::[a-f\d]{24}>/gi;
   const patternURL = /(?:(?:https?):\/\/|www\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
@@ -486,7 +487,9 @@ export const parseMarkdown = (
             urlIndex = url.index;
           }
           parsedTextArray.push(
-            <TouchableWithoutFeedback onPress={() => Linking.openURL(url[0])}>
+            <TouchableWithoutFeedback
+              onPress={() => (handleURL ? handleURL(url[0]) : null)}
+            >
               <Text style={urlStyle}>
                 {lastParsable.substring(urlIndex, url[0].length + urlIndex)}
               </Text>
