@@ -1,6 +1,6 @@
 {
   "name": "@lowkey/react-native-mentions-input",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Mentions input",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
