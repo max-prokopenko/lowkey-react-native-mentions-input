@@ -164,6 +164,3 @@ const styles = StyleSheet.create({
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
-## License
-
-Any usage allowed with written permission only
