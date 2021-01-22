@@ -362,7 +362,6 @@ export default class MentionsInput extends React.Component<Props, State> {
               value={decodeURI(this.props.value.replace(/%/g, encodeURI('%')))}
               onChangeText={this.onTextChange}
               onKeyPress={this.handleDelete}
-              keyboardType="twitter"
               style={this.props.textInputStyle}
               onSelectionChange={this.onSelectionChange}
             />
