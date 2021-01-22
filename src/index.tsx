@@ -54,6 +54,7 @@ type SuggestedUsers = {
 };
 
 export default class MentionsInput extends React.Component<Props, State> {
+  textInput = React.createRef();
   public static defaultProps = {
     placeholder: 'Write a message...',
     multiline: false,
@@ -338,6 +339,10 @@ export default class MentionsInput extends React.Component<Props, State> {
     }
   };
 
+  focus = () => {
+    this.textInput.focus();
+  };
+
   render() {
     return (
       <View>
@@ -350,6 +355,7 @@ export default class MentionsInput extends React.Component<Props, State> {
           <View style={styles.inputContainerRow}>
             <View>{this.renderLeftComponent()}</View>
             <TextInput
+              ref={ref => (this.textInput = ref)}
               placeholder={this.props.placeholder}
               placeholderTextColor={this.props.placeholderTextColor}
               multiline={this.props.multiline}
