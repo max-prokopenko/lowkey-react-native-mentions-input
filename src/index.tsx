@@ -348,12 +348,12 @@ export default class MentionsInput extends React.Component<Props, State> {
               this.handleAddMentions
             )}
           <View style={styles.inputContainerRow}>
-            {this.renderLeftComponent()}
+            <View>{this.renderLeftComponent()}</View>
             <TextInput
               placeholder={this.props.placeholder}
               placeholderTextColor={this.props.placeholderTextColor}
               multiline={this.props.multiline}
-              value={decodeURI(this.props.value.replace(/%/g, encodeURI('%')))}
+              value={decodeURI(this.props.value)}
               onChangeText={this.onTextChange}
               onKeyPress={this.handleDelete}
               keyboardType="twitter"
@@ -526,5 +526,7 @@ export const parseMarkdown = (
 const styles = StyleSheet.create({
   inputContainerRow: {
     flexDirection: 'row',
+    alignItems: 'flex-end',
+    minHeight: 36,
   },
 });
