@@ -2,9 +2,10 @@
 
 Mentions input for tagging user (@username).
 
-#### 0.1.7 Update
+#### 0.2.7 Update
 
-Since 0.1.7 update, `@lowkey/react-native-mentions-input` is also able to parse URLs.
+0.2.7 update `@lowkey/react-native-mentions-input`:
+- Inner component added. Can be used for rendering an element inside the input
 
 ## Installation
 
@@ -34,6 +35,7 @@ import MentionsInput, {parseMarkdown} from '@lowkey/react-native-mentions-input'
 | multiline  | boolean  | Boolean indicating whether input multiline or not |
 | leftComponent  | ReactNode  | Component rendered on the left side of the input |
 | rightComponent  | ReactNode  | Component rendered on the right side of the input |
+| innerComponent  | ReactNode  | Component rendered inside of the input |
 | textInputStyle  | ViewStyle  | Style of the input (TextInput) |
 | suggestedUsersComponent  | ReactNode  | Component for suggested users triggered by @  |
 | users  |  { id: string; name: string; avatar: string; } [] | List of users to be suggested in suggestedUsersComponent |
@@ -43,6 +45,7 @@ import MentionsInput, {parseMarkdown} from '@lowkey/react-native-mentions-input'
     value={value}
     onTextChange={onChangeText}
     onMarkdownChange={(markdown: string) => setMarkdown(markdown)}
+    onFocusStateChange={(isFocused: booldean) => console.log('Input is focused', isFocused )}
     mentionStyle={styles.mentionStyle}
     textInputStyle={styles.textInputStyle}
     users={[

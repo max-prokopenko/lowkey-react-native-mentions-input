@@ -26,7 +26,7 @@ interface Props {
   rightComponent?: React.ReactNode;
   innerComponent?: React.ReactNode;
   textInputStyle: ViewStyle;
-  textInputTextStyle: ViewStyle;
+  textInputTextStyle: TextStyle;
   mentionStyle: TextStyle;
   suggestedUsersComponent: any;
   users: {
@@ -368,15 +368,29 @@ export default class MentionsInput extends React.Component<Props, State> {
             <View style={[this.props.textInputStyle, styles.row]}>
               <TextInput
                 ref={this.textInput}
-                onFocus={() => this.props.onFocusStateChange ? this.props.onFocusStateChange(true) : console.log('onFocus') }
-                onBlur={() => this.props.onFocusStateChange ? this.props.onFocusStateChange(false) : console.log('onFocus lost')  }
+                onFocus={() =>
+                  this.props.onFocusStateChange
+                    ? this.props.onFocusStateChange(true)
+                    : console.log('onFocus')
+                }
+                onBlur={() =>
+                  this.props.onFocusStateChange
+                    ? this.props.onFocusStateChange(false)
+                    : console.log('onFocus lost')
+                }
                 placeholder={this.props.placeholder}
                 placeholderTextColor={this.props.placeholderTextColor}
                 multiline={this.props.multiline}
-                value={decodeURI(this.props.value.replace(/%/g, encodeURI('%')))}
+                value={decodeURI(
+                  this.props.value.replace(/%/g, encodeURI('%'))
+                )}
                 onChangeText={this.onTextChange}
                 onKeyPress={this.handleDelete}
-                style={[this.props.textInputTextStyle, styles.flex, {paddingBottom: this.props.multiline ? 5 : 0}]}
+                style={[
+                  this.props.textInputTextStyle,
+                  styles.flex,
+                  { paddingBottom: this.props.multiline ? 5 : 0 },
+                ]}
                 onSelectionChange={this.onSelectionChange}
               />
               {this.renderInnerComponent()}
@@ -545,8 +559,8 @@ export const parseMarkdown = (
 };
 
 const styles = StyleSheet.create({
-  flex: {flex: 1},
-  row: {flexDirection: 'row'},
+  flex: { flex: 1 },
+  row: { flexDirection: 'row' },
   inputContainerRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',

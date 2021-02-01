@@ -19,6 +19,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <MentionsInput
+        textInputTextStyle={styles.textInputTextStyle}
         placeholder={'Message'}
         onFocusStateChange={(focused) =>
           console.log('input focused is focused', focused)
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
     color: '#000',
     borderWidth: StyleSheet.hairlineWidth,
   },
+  textInputTextStyle: {},
   suggestedUserComponentImageStyle: {
     width: USER_ITEM_HEIGHT * 0.65,
     height: USER_ITEM_HEIGHT * 0.65,
