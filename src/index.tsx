@@ -24,7 +24,9 @@ interface Props {
   onFocusStateChange: (status: boolean) => void;
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
+  innerComponent?: React.ReactNode;
   textInputStyle: ViewStyle;
+  textInputTextStyle: ViewStyle;
   mentionStyle: TextStyle;
   suggestedUsersComponent: any;
   users: {
@@ -340,6 +342,14 @@ export default class MentionsInput extends React.Component<Props, State> {
     }
   };
 
+  renderInnerComponent = () => {
+    if (typeof this.props.innerComponent !== 'undefined') {
+      return this.props.innerComponent;
+    } else {
+      return null;
+    }
+  };
+
   focus = () => {
     this.textInput?.current?.focus();
   };
@@ -355,27 +365,22 @@ export default class MentionsInput extends React.Component<Props, State> {
             )}
           <View style={styles.inputContainerRow}>
             <View>{this.renderLeftComponent()}</View>
-            <TextInput
-              ref={this.textInput}
-              onFocus={() =>
-                this.props.onFocusStateChange
-                  ? this.props.onFocusStateChange(true)
-                  : console.log('onFocus')
-              }
-              onBlur={() =>
-                this.props.onFocusStateChange
-                  ? this.props.onFocusStateChange(false)
-                  : console.log('onFocus lost')
-              }
-              placeholder={this.props.placeholder}
-              placeholderTextColor={this.props.placeholderTextColor}
-              multiline={this.props.multiline}
-              value={decodeURI(this.props.value.replace(/%/g, encodeURI('%')))}
-              onChangeText={this.onTextChange}
-              onKeyPress={this.handleDelete}
-              style={this.props.textInputStyle}
-              onSelectionChange={this.onSelectionChange}
-            />
+            <View style={[this.props.textInputStyle, styles.row]}>
+              <TextInput
+                ref={this.textInput}
+                onFocus={() => this.props.onFocusStateChange ? this.props.onFocusStateChange(true) : console.log('onFocus') }
+                onBlur={() => this.props.onFocusStateChange ? this.props.onFocusStateChange(false) : console.log('onFocus lost')  }
+                placeholder={this.props.placeholder}
+                placeholderTextColor={this.props.placeholderTextColor}
+                multiline={this.props.multiline}
+                value={decodeURI(this.props.value.replace(/%/g, encodeURI('%')))}
+                onChangeText={this.onTextChange}
+                onKeyPress={this.handleDelete}
+                style={[this.props.textInputTextStyle, styles.flex, {paddingBottom: this.props.multiline ? 5 : 0}]}
+                onSelectionChange={this.onSelectionChange}
+              />
+              {this.renderInnerComponent()}
+            </View>
             {this.renderRightComponent()}
           </View>
         </View>
@@ -540,6 +545,8 @@ export const parseMarkdown = (
 };
 
 const styles = StyleSheet.create({
+  flex: {flex: 1},
+  row: {flexDirection: 'row'},
   inputContainerRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
