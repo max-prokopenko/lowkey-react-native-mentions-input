@@ -20,6 +20,9 @@ export default function App() {
     <View style={styles.container}>
       <MentionsInput
         placeholder={'Message'}
+        onFocusStateChange={(focused) =>
+          console.log('input focused is focused', focused)
+        }
         value={value}
         onTextChange={onChangeText}
         onMarkdownChange={(mrkdwn: string) => setMarkdown(mrkdwn)}

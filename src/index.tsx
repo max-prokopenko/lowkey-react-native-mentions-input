@@ -21,6 +21,7 @@ interface Props {
   multiline?: boolean;
   onTextChange: (text: string) => void;
   onMarkdownChange: (markdown: string) => void;
+  onFocusStateChange: (status: boolean) => void;
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   textInputStyle: ViewStyle;
@@ -356,6 +357,16 @@ export default class MentionsInput extends React.Component<Props, State> {
             <View>{this.renderLeftComponent()}</View>
             <TextInput
               ref={this.textInput}
+              onFocus={() =>
+                this.props.onFocusStateChange
+                  ? this.props.onFocusStateChange(true)
+                  : console.log('onFocus')
+              }
+              onBlur={() =>
+                this.props.onFocusStateChange
+                  ? this.props.onFocusStateChange(false)
+                  : console.log('onFocus lost')
+              }
               placeholder={this.props.placeholder}
               placeholderTextColor={this.props.placeholderTextColor}
               multiline={this.props.multiline}
