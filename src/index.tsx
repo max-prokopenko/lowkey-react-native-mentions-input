@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row' },
   inputContainerRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     minHeight: 36,
   },
 });
