@@ -417,7 +417,7 @@ export const parseMarkdown = (
   let matches = [...matchAll(text, pattern)];
 
   if (matches.length === 0) {
-    let currentParsable = decodeURIComponent(textToParse);
+    let currentParsable = decodeURIComponentSafely(textToParse);
     let matchesURL = [...matchAll(currentParsable, patternURL)];
     if (matchesURL.length > 0) {
       parsedTextArray.push(
@@ -450,7 +450,7 @@ export const parseMarkdown = (
         );
       });
     } else {
-      return <Text>{decodeURIComponent(textToParse)}</Text>;
+      return <Text>{decodeURIComponentSafely(textToParse)}</Text>;
     }
     return parsedTextArray;
   }
@@ -461,7 +461,7 @@ export const parseMarkdown = (
       name: matchedUser.split('::')[0],
     };
 
-    let currentParsable = decodeURIComponent(
+    let currentParsable = decodeURIComponentSafely(
       textToParse.substring(parseHeadIndex, match.index)
     );
     let matchesURL = [...matchAll(currentParsable, patternURL)];
@@ -497,7 +497,7 @@ export const parseMarkdown = (
     } else {
       parsedTextArray.push(
         <Text>
-          {decodeURIComponent(
+          {decodeURIComponentSafely(
             textToParse.substring(parseHeadIndex, match.index)
           )}
         </Text>
@@ -511,7 +511,7 @@ export const parseMarkdown = (
     }
 
     if (index === matches.length - 1) {
-      let lastParsable = decodeURIComponent(
+      let lastParsable = decodeURIComponentSafely(
         textToParse.substring(parseHeadIndex, textToParse.length)
       );
       let matchesURL = [...matchAll(lastParsable, patternURL)];
@@ -547,7 +547,7 @@ export const parseMarkdown = (
       } else {
         parsedTextArray.push(
           <Text>
-            {decodeURIComponent(
+            {decodeURIComponentSafely(
               textToParse.substring(parseHeadIndex, textToParse.length)
             )}
           </Text>
@@ -556,6 +556,15 @@ export const parseMarkdown = (
     }
   });
   return parsedTextArray;
+};
+
+const decodeURIComponentSafely = (uri: string) => {
+  try {
+    return decodeURIComponent(uri);
+  } catch (e) {
+    console.log('URI Component not decodable: ' + uri);
+    return uri;
+  }
 };
 
 const styles = StyleSheet.create({
