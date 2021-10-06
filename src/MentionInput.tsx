@@ -64,9 +64,6 @@ export const MentionsInput = ({
   const [matches, SetMatches] = useState<any[]>([]);
   const [mentions, SetMentions] = useState<any[]>([]);
   const [currentCursorPosition, SetCurrentCursorPosition] = useState(0);
-  const [text, SetText] = useState(
-    decodeURI(props.value.replace(/%/g, encodeURI('%')))
-  );
 
   useEffect(() => {
     if (props.value === '' && (mentions.length > 0 || matches.length > 0)) {
@@ -142,6 +139,7 @@ export const MentionsInput = ({
           data: markdown,
         });
       }
+
       mentions.map((mention, index) => {
         let match = matches.find((m) => {
           return (
@@ -226,38 +224,58 @@ export const MentionsInput = ({
     [onTextChange, formatMarkdown]
   );
 
-  const onChangeText = useCallback(
-    (text: string) => {
-      SetText(text);
-      const newMatches = [...matchAll(text, PATTERNS.USERNAME_MENTION)];
-      const newMentions = text.length > 0 ? mentions : [];
+  const handleMentions = useCallback(
+    (newText: string) => {
+      const pattern = PATTERNS.USERNAME_MENTION;
 
-      SetMentions(newMentions);
+      let newMatches = [...matchAll(newText, pattern)];
+      let newMentions = newText.length > 0 ? mentions : [];
+
       SetMatches(newMatches);
+      SetMentions(newMentions);
+      handleSuggestionsOpen(newMatches);
 
       newMentions.map(async (mention) => {
         const matchStartPosition = mention.user.startPosition;
-        if (decodeURI(text).length - text.length > 0) {
+
+        if (decodeURI(newText).length - decodeURI(props.value).length > 0) {
           if (
-            matchStartPosition + (text.length - text.length) >
+            matchStartPosition + (newText.length - props.value.length) >
               currentCursorPosition &&
-            currentCursorPosition !== text.length
+            currentCursorPosition !== props.value.length
           ) {
             mention.user.startPosition =
-              mention.user.startPosition + (text.length - text.length);
+              mention.user.startPosition +
+              (newText.length - props.value.length);
           }
         } else {
           if (matchStartPosition >= currentCursorPosition) {
             mention.user.startPosition =
-              mention.user.startPosition + (text.length - text.length);
+              mention.user.startPosition +
+              (newText.length - props.value.length);
           }
         }
         return mention;
       });
       SetMentions(newMentions);
-      notifyTextChanged(text);
+      onTextChange(newText);
+      formatMarkdown(newText);
     },
-    [mentions, currentCursorPosition, notifyTextChanged]
+    [
+      mentions,
+      currentCursorPosition,
+      props.value,
+      formatMarkdown,
+      handleSuggestionsOpen,
+      onTextChange,
+    ]
+  );
+
+  const onChangeText = useCallback(
+    (newText: string) => {
+      handleMentions(newText);
+    },
+    [handleMentions]
   );
 
   const handleAddMentions = useCallback(
@@ -271,7 +289,8 @@ export const MentionsInput = ({
       const mention = mentions.find(
         (m) => m.user.startPosition === startPosition
       );
-      if (typeof mention !== 'undefined') {
+
+      if (mention) {
         return;
       }
 
@@ -279,9 +298,13 @@ export const MentionsInput = ({
       let newMentions = mentions;
       const userName = transformTag(user.name);
       const newText =
-        text.substring(0, match.index) +
+        props.value.substring(0, match.index) +
         `@${userName} ` +
-        text.substring(match.index + match[0].length, text.length);
+        props.value.substring(
+          match.index + match[0].length,
+          props.value.length
+        );
+
       newMentions.push({
         user: {
           ...user,
@@ -303,7 +326,7 @@ export const MentionsInput = ({
       SetCurrentCursorPosition(match.index + user.name.length + 2);
       onChangeText(newText);
     },
-    [mentions, matches, onChangeText, transformTag, text]
+    [mentions, matches, onChangeText, transformTag, props.value]
   );
 
   const onFocus = useCallback(() => {
@@ -319,7 +342,6 @@ export const MentionsInput = ({
   }, [currentCursorPosition, matches, handleSuggestionsOpen]);
 
   useEffect(() => {
-    SetText(props.value);
     notifyTextChanged(props.value);
   }, [props.value, notifyTextChanged]);
 
@@ -337,7 +359,7 @@ export const MentionsInput = ({
               placeholder={placeholder}
               placeholderTextColor={placeholderTextColor}
               multiline={multiline}
-              value={text}
+              value={decodeURI(props.value.replace(/%/g, encodeURI('%')))}
               onChangeText={onChangeText}
               onKeyPress={handleDelete}
               style={[
