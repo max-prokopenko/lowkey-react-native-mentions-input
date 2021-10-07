@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import MentionsInput, {
+import {
+  MentionsInput,
   parseMarkdown,
 } from '@lowkey/react-native-mentions-input';
 
@@ -56,8 +57,11 @@ export default function App() {
               { top: -(USER_ITEM_HEIGHT * users.length) },
             ]}
           >
-            {users.map((user: any) => (
-              <TouchableOpacity onPress={() => addMentions(user)}>
+            {users.map((user: any, index) => (
+              <TouchableOpacity
+                onPress={() => addMentions(user)}
+                key={index.toString()}
+              >
                 <View key={user.id} style={styles.suggestedUserComponentStyle}>
                   <Image
                     source={{ uri: user.avatar }}
