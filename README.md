@@ -2,10 +2,10 @@
 
 Mentions input for tagging user (@username).
 
-#### 0.2.7 Update
+#### 2.0.0 Update
 
-0.2.7 update `@lowkey/react-native-mentions-input`:
-- Inner component added. Can be used for rendering an element inside the input
+2.0.0 update `@lowkey/react-native-mentions-input`:
+Thanks to [@evgenusov](https://github.com/evgenusov) for refactoring and optimising this library!  
 
 ## Installation
 
