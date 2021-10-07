@@ -225,7 +225,7 @@ export const MentionsInput = ({
   );
 
   const handleMentions = useCallback(
-    (newText: string) => {
+    (newText: string, currentCursorPosition: number) => {
       const pattern = PATTERNS.USERNAME_MENTION;
 
       let newMatches = [...matchAll(newText, pattern)];
@@ -261,21 +261,14 @@ export const MentionsInput = ({
       onTextChange(newText);
       formatMarkdown(newText);
     },
-    [
-      mentions,
-      currentCursorPosition,
-      props.value,
-      formatMarkdown,
-      handleSuggestionsOpen,
-      onTextChange,
-    ]
+    [mentions, props.value, formatMarkdown, handleSuggestionsOpen, onTextChange]
   );
 
   const onChangeText = useCallback(
     (newText: string) => {
-      handleMentions(newText);
+      handleMentions(newText, currentCursorPosition);
     },
-    [handleMentions]
+    [handleMentions, currentCursorPosition]
   );
 
   const handleAddMentions = useCallback(
@@ -323,10 +316,11 @@ export const MentionsInput = ({
 
       SetMentions(newMentions);
       SetIsOpen(false);
-      SetCurrentCursorPosition(match.index + user.name.length + 2);
-      onChangeText(newText);
+      const newCursor = match.index + user.name.length + 1;
+      SetCurrentCursorPosition(newCursor);
+      handleMentions(newText, newCursor);
     },
-    [mentions, matches, onChangeText, transformTag, props.value]
+    [mentions, matches, transformTag, props.value, handleMentions]
   );
 
   const onFocus = useCallback(() => {
