@@ -125,7 +125,12 @@ export const MentionsInput = ({
       SetIsOpen(shouldPresentSuggestions);
       SetSuggesedUsers(newSuggestedUsers);
     },
-    [currentCursorPosition, users]
+    /**
+     * Prevent extra rereder
+     * TODO: Make a better solution
+     * */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentCursorPosition]
   );
 
   const formatMarkdown = useCallback(
@@ -210,10 +215,9 @@ export const MentionsInput = ({
     }: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => {
       if (nativeEvent.selection.start === nativeEvent.selection.end) {
         SetCurrentCursorPosition(nativeEvent.selection.start);
-        handleSuggestionsOpen(matches);
       }
     },
-    [handleSuggestionsOpen, matches]
+    []
   );
 
   const notifyTextChanged = useCallback(
@@ -233,7 +237,6 @@ export const MentionsInput = ({
 
       SetMatches(newMatches);
       SetMentions(newMentions);
-      handleSuggestionsOpen(newMatches);
 
       newMentions.map(async (mention) => {
         const matchStartPosition = mention.user.startPosition;
@@ -261,7 +264,7 @@ export const MentionsInput = ({
       onTextChange(newText);
       formatMarkdown(newText);
     },
-    [mentions, props.value, formatMarkdown, handleSuggestionsOpen, onTextChange]
+    [mentions, onTextChange, formatMarkdown, props.value]
   );
 
   const onChangeText = useCallback(
@@ -333,7 +336,12 @@ export const MentionsInput = ({
 
   useEffect(() => {
     handleSuggestionsOpen(matches);
-  }, [currentCursorPosition, matches, handleSuggestionsOpen]);
+    /**
+     * Prevent extra rereder
+     * TODO: Make a better solution
+     * */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleSuggestionsOpen]);
 
   useEffect(() => {
     notifyTextChanged(props.value);

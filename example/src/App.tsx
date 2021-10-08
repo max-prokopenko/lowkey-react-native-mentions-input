@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Animated,
 } from 'react-native';
 import {
   MentionsInput,
@@ -17,6 +18,7 @@ const { width } = Dimensions.get('window');
 export default function App() {
   const [value, onChangeText] = React.useState<string>('');
   const [markdown, setMarkdown] = React.useState<string>('');
+
   return (
     <View style={styles.container}>
       <MentionsInput
@@ -50,29 +52,14 @@ export default function App() {
               'https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=50',
           },
         ]}
-        suggestedUsersComponent={(users: Array<any>, addMentions: any) => (
-          <View
-            style={[
-              styles.suggestedUserComponentContainer,
-              { top: -(USER_ITEM_HEIGHT * users.length) },
-            ]}
-          >
-            {users.map((user: any, index) => (
-              <TouchableOpacity
-                onPress={() => addMentions(user)}
-                key={index.toString()}
-              >
-                <View key={user.id} style={styles.suggestedUserComponentStyle}>
-                  <Image
-                    source={{ uri: user.avatar }}
-                    style={styles.suggestedUserComponentImageStyle}
-                  />
-                  <Text>{user.name}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
+        suggestedUsersComponent={(users: Array<any>, addMentions: any) => {
+          return (
+            <SuggestedUserComponentStyle
+              users={users}
+              addMentions={addMentions}
+            />
+          );
+        }}
       />
       <View style={styles.exampleContainer}>
         <Text style={styles.exampleHeader}>Parsed Text</Text>
@@ -87,6 +74,55 @@ export default function App() {
     </View>
   );
 }
+
+const SuggestedUserComponentStyle = ({ users, addMentions }: any) => {
+  const [color] = React.useState(
+    `#${Math.floor(Math.random() * 16777215).toString(16)}`
+  );
+
+  const fadeAnim = React.useRef(new Animated.Value(0)).current; // Initial value for scale: 0
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
+
+  return (
+    <View
+      style={[
+        styles.suggestedUserComponentContainer,
+        { top: -(USER_ITEM_HEIGHT * users.length) },
+      ]}
+    >
+      {users.map((user: any, index: number) => (
+        <TouchableOpacity
+          onPress={() => addMentions(user)}
+          key={index.toString()}
+        >
+          <Animated.View
+            key={user.id}
+            style={[
+              styles.suggestedUserComponentStyle,
+              {
+                backgroundColor: color,
+                transform: [{ scale: fadeAnim }],
+              },
+            ]}
+          >
+            <Image
+              source={{ uri: user.avatar }}
+              style={styles.suggestedUserComponentImageStyle}
+            />
+            <Text>{user.name}</Text>
+          </Animated.View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
 
 const USER_ITEM_HEIGHT = 50;
 
