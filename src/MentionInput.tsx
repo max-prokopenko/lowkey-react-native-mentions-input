@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
   TextInput,
   TextInputKeyPressEventData,
+  TextInputProps,
   TextInputSelectionChangeEventData,
   TextStyle,
   View,
@@ -13,7 +14,7 @@ import {
 import matchAll from 'string.prototype.matchall';
 import { PATTERNS } from './constants';
 
-interface Props {
+interface Props extends TextInputProps {
   value: string;
   placeholder?: string;
   placeholderTextColor?: string;
@@ -58,7 +59,6 @@ export const MentionsInput = ({
   users,
   ...props
 }: Props) => {
-  const textInputRef = useRef();
   const [isOpen, SetIsOpen] = useState(false);
   const [suggestedUsers, SetSuggesedUsers] = useState<SuggestedUsers[]>([]);
   const [matches, SetMatches] = useState<any[]>([]);
@@ -347,7 +347,7 @@ export const MentionsInput = ({
           <View>{leftComponent}</View>
           <View style={[textInputStyle, styles.row]}>
             <TextInput
-              ref={textInputRef.current}
+              {...props}
               onFocus={onFocus}
               onBlur={onBlur}
               placeholder={placeholder}
