@@ -220,14 +220,6 @@ export const MentionsInput = ({
     []
   );
 
-  const notifyTextChanged = useCallback(
-    (newText: string) => {
-      onTextChange(newText);
-      formatMarkdown(newText);
-    },
-    [onTextChange, formatMarkdown]
-  );
-
   const handleMentions = useCallback(
     (newText: string, currentCursorPosition: number) => {
       const pattern = PATTERNS.USERNAME_MENTION;
@@ -335,6 +327,10 @@ export const MentionsInput = ({
   }, [onFocusStateChange]);
 
   useEffect(() => {
+    formatMarkdown(props.value);
+  }, [props.value, formatMarkdown]);
+
+  useEffect(() => {
     handleSuggestionsOpen(matches);
     /**
      * Prevent extra rereder
@@ -342,11 +338,6 @@ export const MentionsInput = ({
      * */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSuggestionsOpen]);
-
-  useEffect(() => {
-    notifyTextChanged(props.value);
-  }, [props.value, notifyTextChanged]);
-
   return (
     <View>
       <View>
