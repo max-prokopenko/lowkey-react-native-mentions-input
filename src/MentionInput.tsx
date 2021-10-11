@@ -82,7 +82,7 @@ export const MentionsInput = ({
   }, []);
 
   const handleSuggestionsOpen = useCallback(
-    (values: RegExpMatchArray[]) => {
+    (values: RegExpMatchArray[], currentCursorPosition: number) => {
       let shouldPresentSuggestions = false;
       let newSuggestedUsers: Array<SuggestedUsers> = [];
 
@@ -121,16 +121,24 @@ export const MentionsInput = ({
             });
         }
       });
+      const isSameSuggestedUser =
+        suggestedUsers.length === newSuggestedUsers.length &&
+        suggestedUsers.every(
+          (value, index) => value.id === newSuggestedUsers[index].id
+        );
+      if (
+        (shouldPresentSuggestions !== isOpen && !isOpen) ||
+        values.length === 0
+      ) {
+        SetIsOpen(shouldPresentSuggestions);
+      }
 
-      SetIsOpen(shouldPresentSuggestions);
-      SetSuggesedUsers(newSuggestedUsers);
+      if (!isSameSuggestedUser) {
+        SetSuggesedUsers(newSuggestedUsers);
+      }
     },
-    /**
-     * Prevent extra rereder
-     * TODO: Make a better solution
-     * */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentCursorPosition]
+
+    [users, isOpen, suggestedUsers]
   );
 
   const formatMarkdown = useCallback(
@@ -227,10 +235,7 @@ export const MentionsInput = ({
       let newMatches = [...matchAll(newText, pattern)];
       let newMentions = newText.length > 0 ? mentions : [];
 
-      SetMatches(newMatches);
-      SetMentions(newMentions);
-
-      newMentions.map(async (mention) => {
+      newMentions.map((mention) => {
         const matchStartPosition = mention.user.startPosition;
 
         if (decodeURI(newText).length - decodeURI(props.value).length > 0) {
@@ -252,11 +257,26 @@ export const MentionsInput = ({
         }
         return mention;
       });
-      SetMentions(newMentions);
+
       onTextChange(newText);
       formatMarkdown(newText);
+
+      const isSameMatch =
+        matches.length === newMatches.length &&
+        matches.every((value, index) => value === newMatches[index]);
+      const isSameMentions =
+        mentions.length === newMentions.length &&
+        mentions.every((value, index) => value.id === newMentions[index].id);
+
+      if (!isSameMentions) {
+        SetMentions(newMentions);
+      }
+
+      if (!isSameMatch) {
+        SetMatches(newMatches);
+      }
     },
-    [mentions, onTextChange, formatMarkdown, props.value]
+    [mentions, onTextChange, formatMarkdown, props.value, matches]
   );
 
   const onChangeText = useCallback(
@@ -331,13 +351,13 @@ export const MentionsInput = ({
   }, [props.value, formatMarkdown]);
 
   useEffect(() => {
-    handleSuggestionsOpen(matches);
-    /**
-     * Prevent extra rereder
-     * TODO: Make a better solution
-     * */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleSuggestionsOpen]);
+    let timeout = setTimeout(() => {
+      handleSuggestionsOpen(matches, currentCursorPosition);
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [handleSuggestionsOpen, matches, currentCursorPosition]);
+
   return (
     <View>
       <View>
