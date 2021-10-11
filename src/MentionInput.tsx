@@ -124,21 +124,18 @@ export const MentionsInput = ({
       const isSameSuggestedUser =
         suggestedUsers.length === newSuggestedUsers.length &&
         suggestedUsers.every(
-          (value, index) => value.id === newSuggestedUsers[index].id
+          (value, index) =>
+            value.id === newSuggestedUsers[index].id &&
+            value.startPosition == newSuggestedUsers[index].startPosition
         );
-      if (
-        (shouldPresentSuggestions !== isOpen && !isOpen) ||
-        values.length === 0
-      ) {
-        SetIsOpen(shouldPresentSuggestions);
-      }
 
+      SetIsOpen(shouldPresentSuggestions);
       if (!isSameSuggestedUser) {
         SetSuggesedUsers(newSuggestedUsers);
       }
     },
 
-    [users, isOpen, suggestedUsers]
+    [users, suggestedUsers]
   );
 
   const formatMarkdown = useCallback(
@@ -264,13 +261,8 @@ export const MentionsInput = ({
       const isSameMatch =
         matches.length === newMatches.length &&
         matches.every((value, index) => value === newMatches[index]);
-      const isSameMentions =
-        mentions.length === newMentions.length &&
-        mentions.every((value, index) => value.id === newMentions[index].id);
 
-      if (!isSameMentions) {
-        SetMentions(newMentions);
-      }
+      SetMentions(newMentions);
 
       if (!isSameMatch) {
         SetMatches(newMatches);
@@ -297,7 +289,6 @@ export const MentionsInput = ({
       const mention = mentions.find(
         (m) => m.user.startPosition === startPosition
       );
-
       if (mention) {
         return;
       }
@@ -333,7 +324,9 @@ export const MentionsInput = ({
       SetIsOpen(false);
       const newCursor = match.index + user.name.length + 1;
       SetCurrentCursorPosition(newCursor);
-      handleMentions(newText, newCursor);
+      setTimeout(() => {
+        handleMentions(newText, newCursor);
+      }, 100);
     },
     [mentions, matches, transformTag, props.value, handleMentions]
   );
