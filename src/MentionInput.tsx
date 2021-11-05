@@ -384,7 +384,7 @@ export const MentionsInput = React.forwardRef(
                 //@ts-ignore
                 ref={ref}
               />
-              {innerComponent}
+              <View style={styles.innerContainer}>{innerComponent}</View>
             </View>
             {rightComponent}
           </View>
@@ -401,5 +401,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 36,
+  },
+  innerContainer: {
+    zIndex: 100,
   },
 });
