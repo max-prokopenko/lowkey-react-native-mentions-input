@@ -48,7 +48,6 @@ export const parseMarkdown = (
         if (typeof url.index !== 'undefined') {
           urlIndex = url.index;
         }
-        index += 1;
         parsedTextArray.push(
           <TouchableWithoutFeedback
             key={getKeyComponent()}
