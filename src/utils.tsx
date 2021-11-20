@@ -128,9 +128,13 @@ export const parseMarkdown = (
       );
     }
     parsedTextArray.push(
-      <Text style={mentionStyle} key={getKeyComponent()}>{`@${decodeURI(
-        mention.name
-      )}`}</Text>
+      <TouchableWithoutFeedback
+        onPress={() => (handleURL ? handleURL(mention.id) : null)}
+      >
+        <Text style={mentionStyle} key={getKeyComponent()}>{`@${decodeURI(
+          mention.name
+        )}`}</Text>
+      </TouchableWithoutFeedback>
     );
     if (typeof match.index === 'number') {
       parseHeadIndex = match.index + match[0].length;
